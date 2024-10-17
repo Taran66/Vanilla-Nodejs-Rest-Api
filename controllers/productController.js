@@ -60,7 +60,7 @@ async function createProduct(req, res){
 // @desc Update a Product
 // @route PUT /api/products
 
-async function createProduct(req, res, id){
+async function updateProduct(req, res, id){
     try {
         const product = await Product.findById(id)
 
@@ -70,7 +70,6 @@ async function createProduct(req, res, id){
         }
         else{
             const body = await getPostData(req)
-
             const { title, description, price } = JSON.parse(body)
             
             const productData = {
@@ -86,6 +85,26 @@ async function createProduct(req, res, id){
             }
         
     } catch (error){
+        console.log(error) 
+    }
+}
+
+
+//@desc Delete Product
+//route DELETE /api/products/:id
+async function deleteProduct(req, res, id) {
+    try{
+        const product = await Product.findById(id)
+
+        if(!product){
+            res.writeHead(404, { 'Content-Type' : 'application/json' })
+            res.end(JSON.stringify({ message: "Product Not Found" }))
+        } else{
+            await Product.remove(id)
+            res.writeHead(200, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ message: `Product ${id} removed` }))
+        }
+    } catch (error){
         console.log(error)
     }
 }
@@ -94,5 +113,7 @@ async function createProduct(req, res, id){
 module.exports = {
     getProducts,
     getProduct,
-    createProduct
+    createProduct,
+    updateProduct,
+    deleteProduct
 }
